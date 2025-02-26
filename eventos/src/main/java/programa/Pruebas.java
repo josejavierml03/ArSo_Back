@@ -1,14 +1,10 @@
 package programa;
 
 import dominio.Categoria;
-import dto.EspacioFisicoDTO;
+
 import dominio.PuntoDeInteres;
-import servicioEventos.ServicioEspacios;
 import servicioEventos.ServicioEventos;
-import servicioEventos.PuntosDeInteres;
 import servicioEventos.EventoResumen;
-import servicioEventos.IServicioEspacios;
-import servicioEventos.IPuntosDeInteres;
 import servicioEventos.IServicioEventos;
 import repositorio.RepositorioException;
 import repositorio.EntidadNoEncontrada;
@@ -18,6 +14,9 @@ import java.util.List;
 public class Pruebas {
     public static void main(String[] args) throws Exception {
     	
+    	System.out.println("Prueba");
+    	
+    	/*
         IServicioEspacios servicioEspacios = new ServicioEspacios();
         IServicioEventos servicioEventos = new ServicioEventos();
         IPuntosDeInteres servicioPuntosDeInteres = new PuntosDeInteres();
@@ -84,6 +83,6 @@ public class Pruebas {
         } catch (IllegalArgumentException e) {
             System.err.println("Error de validación: " + e.getMessage());
             e.printStackTrace();
-        }
+        }    	*/
     }
 }

@@ -101,6 +101,7 @@ public class ServicioEspacios implements IServicioEspacios{
 		repositorio.update(espacio);
 		
 	}
+	
 
 	@Override
 	public void activarEspacioFisico(String id) throws RepositorioException, EntidadNoEncontrada {
@@ -138,8 +139,10 @@ public class ServicioEspacios implements IServicioEspacios{
 	    return espacios;
 	    
 	}
-
-
-
+	
+	@Override
+	public EspacioFisico recuperarEspacioFisico(String id) throws RepositorioException, EntidadNoEncontrada {
+	    return repositorio.getById(id);
+	}
 
 }

@@ -2,6 +2,7 @@ package rest;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,16 +22,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dominio.EspacioFisico;
 import dominio.PuntoDeInteres;
 import dto.CrearEspacioFisicoDto;
+import dto.EspacioFisicoDto;
 import dto.PuntoDeInteresDto;
 import dto.PuntosDeInteresDto;
 import dto.UpdateEspacioFisicoDto;
 import repositorio.EntidadNoEncontrada;
 import repositorio.RepositorioException;
+import rest.Listado.EspacioFisicoExtendido;
 import servicio.FactoriaServicios;
 import servicioEventos.IServicioEspacios;
-import servicioEventos.PuntosDeInteres;
 
 @Path("espacios")
 public class ControladorEspacioFisico {
@@ -102,15 +105,90 @@ public class ControladorEspacioFisico {
 	@GET
 	@Path("/libres")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getActividad(@QueryParam("fechaInicio") String fechaInicio,
+	public Response getListadoEspaciosLibres(@QueryParam("fechaInicio") String fechaInicio,
 								  @QueryParam("fechaFin")    String fechaFin,
-								  @QueryParam("capacidadMin") int capacidadMin) throws Exception {
+								  @QueryParam("capacidadMin") int capacidadMin) throws RepositorioException {
+		LocalDateTime fechaInicioParseada = null;
+		fechaInicioParseada  = LocalDateTime.parse(fechaInicio);
+		LocalDateTime fechaFinalParseada = null;
+		fechaFinalParseada  = LocalDateTime.parse(fechaInicio);
+		 
+		List<EspacioFisico> espaciosLibres = servicio.buscarEspaciosFisicosLibres(fechaInicioParseada, fechaFinalParseada, capacidadMin);
 		
-		//Hacer listado
+		LinkedList<EspacioFisicoExtendido> extendido = new LinkedList<>();
+		for (EspacioFisico es : espaciosLibres) {
+			EspacioFisicoExtendido espacioFisicoExtendido = new EspacioFisicoExtendido();
+			espacioFisicoExtendido.setEs(es);
+
+			String id = es.getId();
+			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id).build();
+			espacioFisicoExtendido.setUrl(nuevaURL.toString());
+
+			extendido.add(espacioFisicoExtendido);
+		}
+		Listado listado = new Listado();
+		listado.setEspacio(extendido);
+		return Response.ok(listado).build();
 		
-		return null;
-
-
 	}
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response buscarEspaciosPorPropietario(@QueryParam("propietario") String propietario) 
+	        throws RepositorioException {
+
+	    List<EspacioFisico> espacios = servicio.obtenerEspaciosPorPropietario(propietario); //Dudas de si aplicar DTO o no
+	    
+	    List<EspacioFisicoExtendido> extendido = new LinkedList<>();
+	    for (EspacioFisico es : espacios) {
+	        EspacioFisicoExtendido espacioExtendido = new EspacioFisicoExtendido();
+	        espacioExtendido.setEs(es);
+	        
+	        URI urlRecurso = this.uriInfo.getAbsolutePathBuilder().path(es.getId()).build();
+	        espacioExtendido.setUrl(urlRecurso.toString());
+	        
+	        extendido.add(espacioExtendido);
+	    }
+
+	    Listado listado = new Listado();
+	    listado.setEspacio(extendido);
+
+	    return Response.ok(listado).build();
+	}
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response recuperarEspacioFisico(@PathParam("id") String id)
+	        throws RepositorioException, EntidadNoEncontrada {
+
+	    EspacioFisico espacio = servicio.recuperarEspacioFisico(id);
+
+	    EspacioFisicoDto dto = new EspacioFisicoDto();
+	    dto.setId(espacio.getId());
+	    dto.setNombre(espacio.getNombre());
+	    dto.setPropietario(espacio.getPropietario());
+	    dto.setCapacidad(espacio.getCapacidad());
+	    dto.setDireccion(espacio.getDireccion());
+	    dto.setLatitud(espacio.getLatitud());
+	    dto.setLongitud(espacio.getLongitud());
+	    dto.setDescripcion(espacio.getDescripcion());
+	    dto.setEstado(espacio.getEstado().name());
+
+	    List<PuntoDeInteresDto> listaPuntosDto = new ArrayList<>();
+	    for (PuntoDeInteres p : espacio.getPuntosDeInteres()) {
+	        PuntoDeInteresDto pdto = new PuntoDeInteresDto();
+	        pdto.setNombre(p.getNombre());
+	        pdto.setDescripcion(p.getDescripcion());
+	        pdto.setDistancia(p.getDistancia());
+	        pdto.setUrlAWikipedia(p.getUrlAWikipedia());
+	        listaPuntosDto.add(pdto);
+	    }
+	    dto.setPuntosDeInteres(listaPuntosDto);
+
+	    return Response.status(Response.Status.OK).entity(dto).build();
+	}
+
+	
+	
 
 }

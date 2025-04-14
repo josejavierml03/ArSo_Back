@@ -23,4 +23,6 @@ public interface IServicioEspacios {
 	List<EspacioFisico> buscarEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin, int capacidadMinima) throws RepositorioException;
 	
 	public List<EspacioFisico> obtenerEspaciosPorPropietario(String propietario) throws RepositorioException;
+	
+	EspacioFisico recuperarEspacioFisico(String id) throws RepositorioException, EntidadNoEncontrada;
 }

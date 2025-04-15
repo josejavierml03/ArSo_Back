@@ -2,6 +2,7 @@ package rest;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class ControladorEspacioFisico {
 	
 	@PUT
 	@Path("/{id}/puntosinteres")
-	@Consumes( MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updatePto(@PathParam("id") String id, PuntosDeInteresDto pto ) 
 			throws RepositorioException, EntidadNoEncontrada {
 		LinkedList<PuntoDeInteres> puntos =  new LinkedList<>();
@@ -108,10 +109,13 @@ public class ControladorEspacioFisico {
 	public Response getListadoEspaciosLibres(@QueryParam("fechaInicio") String fechaInicio,
 								  @QueryParam("fechaFin")    String fechaFin,
 								  @QueryParam("capacidadMin") int capacidadMin) throws RepositorioException {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 		LocalDateTime fechaInicioParseada = null;
-		fechaInicioParseada  = LocalDateTime.parse(fechaInicio);
+		fechaInicioParseada  = LocalDateTime.parse(fechaInicio,formatter);
 		LocalDateTime fechaFinalParseada = null;
-		fechaFinalParseada  = LocalDateTime.parse(fechaInicio);
+		fechaFinalParseada  = LocalDateTime.parse(fechaFin,formatter);
+		fechaInicioParseada = LocalDateTime.parse(fechaInicio.trim(),formatter);
+		fechaFinalParseada = LocalDateTime.parse(fechaFin.trim(),formatter);
 		 
 		List<EspacioFisico> espaciosLibres = servicio.buscarEspaciosFisicosLibres(fechaInicioParseada, fechaFinalParseada, capacidadMin);
 		
@@ -131,6 +135,7 @@ public class ControladorEspacioFisico {
 		return Response.ok(listado).build();
 		
 	}
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response buscarEspaciosPorPropietario(@QueryParam("propietario") String propietario) 
@@ -187,8 +192,5 @@ public class ControladorEspacioFisico {
 
 	    return Response.status(Response.Status.OK).entity(dto).build();
 	}
-
-	
-	
 
 }

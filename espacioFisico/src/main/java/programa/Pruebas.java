@@ -37,6 +37,7 @@ public class Pruebas {
         System.out.println("Espacio físico modificado.");
 
 
+
         
     }
 }

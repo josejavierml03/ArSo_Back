@@ -126,7 +126,7 @@ public class ServicioEspacios implements IServicioEspacios{
 		if(fechaInicio.isAfter(fechaFin) || fechaInicio.equals(null) || fechaFin.equals(null)) 
 				throw new IllegalArgumentException("fechas incorrectas");
 		
-		List<EspacioFisico> espacios = repositorioAH.buscarEspaciosLibres(fechaInicio, fechaFin, capacidadMinima);
+		List<EspacioFisico> espacios = repositorioAH.buscarEspaciosLibres(fechaInicio, fechaFin, capacidadMinima); //Tiene que mirar evento
 		return espacios;
 	}
 	

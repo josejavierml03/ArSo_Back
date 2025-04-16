@@ -91,11 +91,10 @@ public class ControladorEspacioFisico {
 	
 	@PUT
 	@Path("/{id}/estado")
-	@Consumes( MediaType.APPLICATION_JSON)
 	public Response updateEstado(@PathParam("id") String id, @FormParam("estado") String estado) 
 			throws RepositorioException, EntidadNoEncontrada {
 		if ("cerrado".equals(estado)) {
-			servicio.darDeBajaEspacioFisico(id);
+			servicio.darDeBajaEspacioFisico(id); //Tiene que mirar el evento
 		} else if ("activo".equals(estado)){
 			servicio.activarEspacioFisico(id);
 		}

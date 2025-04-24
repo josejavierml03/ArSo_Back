@@ -12,7 +12,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class PruebasAuth {
 	public static void main(String[] args) {
 		
-		//eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc3VhcmlvIiwiZXhwIjoxNzQ1MjU4Mjg3fQ.JBBtWfirpfkuz2UhiifRwVxcbneaJmmdf_TYbeCLqIs
+		// eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc3VhcmlvIiwiZXhwIjoxNzQ1MjU4Mjg3fQ.JBBtWfirpfkuz2UhiifRwVxcbneaJmmdf_TYbeCLqIs
 		
 		Map<String, Object> claims = new HashMap<String, Object>(); 
 	

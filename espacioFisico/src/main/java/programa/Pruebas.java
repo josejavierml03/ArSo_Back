@@ -16,7 +16,6 @@ public class Pruebas {
         IServicioEspacios servicioEspacios = new ServicioEspacios();
         IPuntosDeInteres servicioPuntosDeInteres = new PuntosDeInteres();
 
-        
         String espacioId = servicioEspacios.altaDeUnEspacioFisico(
                 "Auditorio Principal", "a", 300, "Calle Principal 123", 37.98412315304831, 19.4326, "Auditorio para conferencias");
         System.out.println("Espacio físico creado con ID: " + espacioId);
@@ -35,8 +34,6 @@ public class Pruebas {
 
         servicioEspacios.modificarEspacioFisico(espacioId, "Auditorio Renovado", 350, "Auditorio actualizado");
         System.out.println("Espacio físico modificado.");
-
-
 
         
     }

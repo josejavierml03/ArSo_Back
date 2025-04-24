@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -49,6 +50,7 @@ public class ControladorEspacioFisico {
 	
 	@POST
 	@Consumes( MediaType.APPLICATION_JSON )
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	public Response createEspacio(CrearEspacioFisicoDto es) throws RepositorioException {
 		String id = servicio.altaDeUnEspacioFisico(es.getNombre(),
 												   es.getPropietario(),
@@ -63,6 +65,7 @@ public class ControladorEspacioFisico {
 	
 	@PUT
 	@Path("/{id}/puntosinteres")
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updatePto(@PathParam("id") String id, PuntosDeInteresDto pto ) 
 			throws RepositorioException, EntidadNoEncontrada {
@@ -80,6 +83,7 @@ public class ControladorEspacioFisico {
 	
 	@PATCH
 	@Path("/{id}")
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateEspacioFisico(@PathParam("id") String id, UpdateEspacioFisicoDto dto) 
 			throws RepositorioException, EntidadNoEncontrada {
@@ -91,6 +95,7 @@ public class ControladorEspacioFisico {
 	
 	@PUT
 	@Path("/{id}/estado")
+	@RolesAllowed("PROPIETARIO_ESPACIOS")
 	public Response updateEstado(@PathParam("id") String id, @FormParam("estado") String estado) 
 			throws RepositorioException, EntidadNoEncontrada {
 		if ("cerrado".equals(estado)) {
@@ -105,6 +110,7 @@ public class ControladorEspacioFisico {
 	@GET
 	@Path("/libres")
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("USUARIO")
 	public Response getListadoEspaciosLibres(@QueryParam("fechaInicio") String fechaInicio,
 								  @QueryParam("fechaFin")    String fechaFin,
 								  @QueryParam("capacidadMin") int capacidadMin) throws RepositorioException {
@@ -137,6 +143,7 @@ public class ControladorEspacioFisico {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("USUARIO")
 	public Response buscarEspaciosPorPropietario(@QueryParam("propietario") String propietario) 
 	        throws RepositorioException {
 
@@ -162,6 +169,7 @@ public class ControladorEspacioFisico {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("USUARIO")
 	public Response recuperarEspacioFisico(@PathParam("id") String id)
 	        throws RepositorioException, EntidadNoEncontrada {
 

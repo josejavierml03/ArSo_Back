@@ -1,6 +1,4 @@
 package auth;
-
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.FormParam;
@@ -8,18 +6,27 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import servicio.FactoriaServicios;
+import servicioEventos.IServicioUsuarios;
+
 @Path("auth")
 public class ControladorAuth {
 
-	// curl -X POST -H "Content-Type: application/x-www-form-urlencoded"  -d "username=juan&password=clave" http://localhost:8080/api/auth/login
+	// curl -X POST -H "Content-Type: application/x-www-form-urlencoded"  -d "username=ana&password=abcd" http://localhost:8080/api/auth/login
 	
-	// eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuIiwicm9sZXMiOiJQUk9GRVNPUiIsImV4cCI6MTc0NTI1ODY5OX0.jn2YOmw8XA6_oc4PA8KVp3NYVtQE7qClBr7Hsr5DSwc
+	// eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmEiLCJyb2xlcyI6IlBST1BJRVRBUklPX0VTUEFDSU9TIiwiZXhwIjoxNzQ1NDY0OTgwfQ.mKOVEtCHYY6PF4RvW471fRkrjCERCOZ94qgNFv4ob1c
 	
+	private IServicioUsuarios servicioUsuarios;
+
+    public ControladorAuth() {
+        this.servicioUsuarios = FactoriaServicios.getServicio(IServicioUsuarios.class);
+    }
+    
 	@POST
 	@Path("/login")
 	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
 
-		Map<String, Object> claims = verificarCredenciales(username, password);
+		Map<String, Object> claims = servicioUsuarios.verificarCredenciales(username, password);
 		if (claims != null) {
 			String token = JwtUtils.generateToken(claims);
 			return Response.ok(token).build();
@@ -29,14 +36,4 @@ public class ControladorAuth {
 
 	}
 
-	private Map<String, Object> verificarCredenciales(String username, String password) {
-		
-		// TODO: verificar las credenciales
-		
-		HashMap<String, Object> claims = new HashMap<String, Object>();
-		claims.put("sub", username);
-		claims.put("roles", "PROFESOR");
-		
-		return claims;
-	}
 }

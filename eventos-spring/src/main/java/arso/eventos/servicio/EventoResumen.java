@@ -7,6 +7,7 @@ import arso.eventos.modelo.*;
 
 public class EventoResumen {
 
+	private String id;
 	private String nombre;
 	private String descipcion;
 	private LocalDateTime fechaInicio;
@@ -25,11 +26,11 @@ public class EventoResumen {
 
 	@Override
 	public String toString() {
-		return "EventoResumen [nombre=" + nombre + ", descipcion=" + descipcion + ", fechaInicio=" + fechaInicio
-				+ ", categoria=" + categoria + ", nombreEspacioFisico=" + nombreEspacioFisico
+		return "EventoResumen [id=" + id + ", nombre=" + nombre + ", descipcion=" + descipcion + ", fechaInicio="
+				+ fechaInicio + ", categoria=" + categoria + ", nombreEspacioFisico=" + nombreEspacioFisico
 				+ ", direccionEspacioFisico=" + direccionEspacioFisico + ", puntos=" + puntos + "]";
 	}
-	
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -65,6 +66,14 @@ public class EventoResumen {
 	}
 	public void setDireccionEspacioFisico(String direccionEspacioFisico) {
 		this.direccionEspacioFisico = direccionEspacioFisico;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 }

@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,7 +86,7 @@ public class ServicioEventos implements IServicioEventos {
 
 	@Override
 	public void modificarEvento(String id, LocalDateTime fechaInicio, LocalDateTime fechaFin, Integer plazas,
-	                            EspacioFisico espacioFisico, String descripcion)
+	                            String espacioFisicoId, String descripcion)
 	        throws EntidadNoEncontrada {
 
 	    if (id == null || id.isEmpty()) {
@@ -91,6 +94,7 @@ public class ServicioEventos implements IServicioEventos {
 	    }
 
 	    Evento evento = this.getEvento(id);
+	    EspacioFisico es = this.repositorioEspacio.findById(espacioFisicoId).orElse(null);
 
 	    if (fechaInicio != null) {
 	        evento.getOcupacion().setFechaInicio(fechaInicio);
@@ -101,8 +105,8 @@ public class ServicioEventos implements IServicioEventos {
 	    if (plazas != null && plazas > 0) {
 	        evento.setPlazas(plazas);
 	    }
-	    if (espacioFisico != null) {
-	        evento.getOcupacion().setEspacioFisico(espacioFisico);
+	    if (es != null) {
+	        evento.getOcupacion().setEspacioFisico(es);
 	    }
 	    if (descripcion != null && !descripcion.isEmpty()) {
 	        evento.setDescripcion(descripcion);
@@ -138,6 +142,7 @@ public class ServicioEventos implements IServicioEventos {
 			EspacioFisico espacio = e.getOcupacion().getEspacioFisico();
 			Ocupacion ocupacion = e.getOcupacion();
 			EventoResumen eventoR = new EventoResumen();
+			eventoR.setId(e.getId());
 			eventoR.setNombre(e.getNombre());
 			eventoR.setDescipcion(e.getDescripcion());
 			eventoR.setCategoria(e.getCategoria());
@@ -154,6 +159,14 @@ public class ServicioEventos implements IServicioEventos {
 		}
 		
 		return eventosResumen;
+	}
+	
+	public Page<EventoResumen> convertirAPaginable(List<EventoResumen> lista, Pageable pageable) {
+	    int start = (int) pageable.getOffset();
+	    int end = Math.min(start + pageable.getPageSize(), lista.size());
+
+	    List<EventoResumen> sublista = lista.subList(start, end);
+	    return new PageImpl<>(sublista, pageable, lista.size());
 	}
 
 }

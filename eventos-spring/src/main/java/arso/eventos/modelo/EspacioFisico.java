@@ -24,13 +24,15 @@ public class EspacioFisico {
     private List<PuntoDeInteres> puntosDeInteres;
     @Enumerated(EnumType.STRING)
     private Estado estado;
+    private int capacidad;
 
-    public EspacioFisico(String nombre, String direccion,String descripcion) {
+    public EspacioFisico(String nombre, String direccion,String descripcion,int capacidad) {
 
         this.nombre = nombre;
         this.direccion = direccion;
         this.puntosDeInteres = new ArrayList<PuntoDeInteres>();
         this.estado = Estado.ACTIVO;
+        this.setCapacidad(capacidad);
     }
     
 
@@ -86,6 +88,16 @@ public class EspacioFisico {
 
 	public void setEstado(Estado estado) {
 		this.estado = estado;
+	}
+
+
+	public int getCapacidad() {
+		return capacidad;
+	}
+
+
+	public void setCapacidad(int capacidad) {
+		this.capacidad = capacidad;
 	}
     
 }

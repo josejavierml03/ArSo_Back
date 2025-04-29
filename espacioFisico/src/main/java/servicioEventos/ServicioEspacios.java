@@ -1,12 +1,17 @@
 package servicioEventos;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import dominio.EspacioFisico;
 import dominio.Estado;
 import dominio.PuntoDeInteres;
+import dto.EspacioLibreDto;
+import dto.EspaciosLibresRespuesta;
 import repositorio.EntidadNoEncontrada;
 import repositorio.Repositorio;
 import repositorio.RepositorioException;
@@ -88,9 +93,17 @@ public class ServicioEspacios implements IServicioEspacios{
 		
 		if (id == null || id.isEmpty())
 			throw new IllegalArgumentException("id: no debe ser nulo ni vacio");
-		boolean activas = repositorioAH.espacioConOcupacionesActivas(id).stream().anyMatch(o -> o.calcularActiva());
-		if(activas) {
-			throw new IllegalArgumentException("este espacioFisico tiene ocupaciones activas");
+		 try {
+		        boolean activas = ServicioEventoProvider.getClient()
+		            .tieneOcupacionesActivas(id)
+		            .execute()
+		            .body();
+
+		        if (activas) {
+		            throw new IllegalArgumentException("este espacioFisico tiene ocupaciones activas");
+		        }
+		    } catch (IOException e) {
+		        throw new RepositorioException("Error al consultar el servicio de eventos", e);
 		}
 		EspacioFisico espacio = repositorio.getById(id);
 		
@@ -121,14 +134,47 @@ public class ServicioEspacios implements IServicioEspacios{
 
 	@Override
 	public List<EspacioFisico> buscarEspaciosFisicosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,
-			int capacidadMinima) throws RepositorioException {
-		
-		if(fechaInicio.isAfter(fechaFin) || fechaInicio.equals(null) || fechaFin.equals(null)) 
-				throw new IllegalArgumentException("fechas incorrectas");
-		
-		List<EspacioFisico> espacios = repositorioAH.buscarEspaciosLibres(fechaInicio, fechaFin, capacidadMinima); //Tiene que mirar evento
-		return espacios;
+	        int capacidadMinima) throws RepositorioException {
+	    
+	    if (fechaInicio.isAfter(fechaFin) || fechaInicio.equals(null) || fechaFin.equals(null)) 
+	        throw new IllegalArgumentException("Fechas incorrectas");
+	    
+	    try {
+	        String fechaInicioStr = fechaInicio.toString();
+	        String fechaFinStr = fechaFin.toString();
+
+	        EspaciosLibresRespuesta respuesta = ServicioEventoProvider.getClient()
+	            .obtenerEspaciosLibres(fechaInicioStr, fechaFinStr, capacidadMinima)
+	            .execute()
+	            .body();
+
+	        if (respuesta == null || respuesta.getEspacios() == null || respuesta.getEspacios().isEmpty()) {
+	            System.out.println("No hay espacios libres disponibles en esas fechas");
+	            return new ArrayList<>();
+	        }
+	        List<EspacioLibreDto> libres = respuesta.getEspacios();
+	        System.out.println("LIBRESSSS : "+libres);
+	        
+	        if (libres == null) {
+	            throw new RepositorioException("Respuesta nula del servicio de eventos");
+	        }
+
+	        return libres.stream()
+	            .map(dto -> {
+	                try {
+	                    return repositorio.getById(dto.getId());
+	                } catch (EntidadNoEncontrada | RepositorioException e) {
+	                    return null;
+	                }
+	            })
+	            .filter(Objects::nonNull)
+	            .collect(Collectors.toList());
+
+	    } catch (IOException e) {
+	        throw new RepositorioException("Error al consultar espacios libres desde servicio de eventos", e);
+	    }
 	}
+
 	
 	@Override
 	public List<EspacioFisico> obtenerEspaciosPorPropietario(String propietario) throws RepositorioException {

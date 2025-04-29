@@ -13,6 +13,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	        usuarios.put("ana", new Usuario("ana", "abcd", "PROPIETARIO_ESPACIOS"));
 	        usuarios.put("lucia", new Usuario("lucia", "pass", "USUARIO"));
 	    }
+	    
 
 	    @Override
 	    public Map<String, Object> verificarCredenciales(String username, String password) {

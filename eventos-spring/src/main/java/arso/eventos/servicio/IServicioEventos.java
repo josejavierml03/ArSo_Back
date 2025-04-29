@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import arso.eventos.modelo.*;
+import arso.eventos.rest.dto.EspacioLibreDto;
 import repositorio.*;
 
 public interface IServicioEventos {
@@ -21,6 +22,10 @@ public interface IServicioEventos {
 	
 	public Evento getEvento(String id) throws EntidadNoEncontrada;
 	
-	Page<EventoResumen> convertirAPaginable(List<EventoResumen> lista, Pageable pageable);
+	public <T> Page<T> convertirAPaginable(List<T> lista, Pageable pageable);
+	
+	Boolean obtenerOcupacionesActivasPorEspacio(String idEspacio) throws EntidadNoEncontrada ;
+
+	List<EspacioLibreDto> obtenerIdsEspaciosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin,int capacidad);
 
 }

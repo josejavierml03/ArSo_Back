@@ -18,6 +18,7 @@ import arso.eventos.modelo.*;
 import arso.eventos.repositorio.RepositorioEspacio;
 import arso.eventos.repositorio.RepositorioEvento;
 import arso.eventos.repositorio.RepositorioEventoJPA;
+import arso.eventos.rest.dto.EspacioLibreDto;
 import repositorio.EntidadNoEncontrada;
 
 @Service
@@ -161,12 +162,35 @@ public class ServicioEventos implements IServicioEventos {
 		return eventosResumen;
 	}
 	
-	public Page<EventoResumen> convertirAPaginable(List<EventoResumen> lista, Pageable pageable) {
-	    int start = (int) pageable.getOffset();
-	    int end = Math.min(start + pageable.getPageSize(), lista.size());
+	public <T> Page<T> convertirAPaginable(List<T> lista, Pageable pageable) {
+	    int total = lista.size();
+	    int inicio = (int) pageable.getOffset();
+	    int fin = Math.min(inicio + pageable.getPageSize(), total);
+	    List<T> subLista = lista.subList(inicio, fin);
+	    return new PageImpl<>(subLista, pageable, total);
+	}
 
-	    List<EventoResumen> sublista = lista.subList(start, end);
-	    return new PageImpl<>(sublista, pageable, lista.size());
+	
+	@Override
+	public Boolean obtenerOcupacionesActivasPorEspacio(String idEspacio) throws EntidadNoEncontrada{
+        List<Evento> eventos = (List<Evento>) repositorioEvento.findAll();
+        
+        return eventos.stream()
+            .filter(e -> !e.isCancelado())
+            .filter(e -> e.getOcupacion() != null 
+                      && e.getOcupacion().getEspacioFisico() != null
+                      && idEspacio.equals(e.getOcupacion().getEspacioFisico().getId())
+                      && e.getOcupacion().calcularActiva())
+            .findAny()
+            .isPresent();
+    }
+	
+	@Override
+	public List<EspacioLibreDto> obtenerIdsEspaciosLibres(LocalDateTime fechaInicio, LocalDateTime fechaFin, int capacidad) {
+	    List<Object[]> resultados = repositorioEvento.findIdsEspaciosLibresEntre(fechaInicio, fechaFin,capacidad);
+	    return resultados.stream()
+	    	    .map(arr -> new EspacioLibreDto((String) arr[0], (String) arr[1]))
+	    	    .collect(Collectors.toList());
 	}
 
 }

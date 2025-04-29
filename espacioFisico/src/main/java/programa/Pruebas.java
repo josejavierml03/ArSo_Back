@@ -31,10 +31,9 @@ public class Pruebas {
         } else {
             System.out.println("No se encontraron puntos de interés cercanos para las coordenadas proporcionadas.");
         }
-
+/*
         servicioEspacios.modificarEspacioFisico(espacioId, "Auditorio Renovado", 350, "Auditorio actualizado");
-        System.out.println("Espacio físico modificado.");
+        System.out.println("Espacio físico modificado.");*/
 
-        
     }
 }

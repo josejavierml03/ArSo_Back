@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.mysql.cj.Query;
-
 import dominio.EspacioFisico;
 import dominio.Estado;
 import dominio.Ocupacion;

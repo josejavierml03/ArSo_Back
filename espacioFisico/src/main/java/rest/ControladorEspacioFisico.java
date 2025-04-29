@@ -99,7 +99,7 @@ public class ControladorEspacioFisico {
 	public Response updateEstado(@PathParam("id") String id, @FormParam("estado") String estado) 
 			throws RepositorioException, EntidadNoEncontrada {
 		if ("cerrado".equals(estado)) {
-			servicio.darDeBajaEspacioFisico(id); //Tiene que mirar el evento
+			servicio.darDeBajaEspacioFisico(id);
 		} else if ("activo".equals(estado)){
 			servicio.activarEspacioFisico(id);
 		}
@@ -113,16 +113,13 @@ public class ControladorEspacioFisico {
 	@RolesAllowed("USUARIO")
 	public Response getListadoEspaciosLibres(@QueryParam("fechaInicio") String fechaInicio,
 								  @QueryParam("fechaFin")    String fechaFin,
-								  @QueryParam("capacidadMin") int capacidadMin) throws RepositorioException {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-		LocalDateTime fechaInicioParseada = null;
-		fechaInicioParseada  = LocalDateTime.parse(fechaInicio,formatter);
-		LocalDateTime fechaFinalParseada = null;
-		fechaFinalParseada  = LocalDateTime.parse(fechaFin,formatter);
-		fechaInicioParseada = LocalDateTime.parse(fechaInicio.trim(),formatter);
-		fechaFinalParseada = LocalDateTime.parse(fechaFin.trim(),formatter);
+								  @QueryParam("capacidad") int capacidad) throws RepositorioException {
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+
+	    LocalDateTime fechaInicioParseada = LocalDateTime.parse(fechaInicio.trim(), formatter);
+	    LocalDateTime fechaFinalParseada = LocalDateTime.parse(fechaFin.trim(), formatter);
 		 
-		List<EspacioFisico> espaciosLibres = servicio.buscarEspaciosFisicosLibres(fechaInicioParseada, fechaFinalParseada, capacidadMin);
+		List<EspacioFisico> espaciosLibres = servicio.buscarEspaciosFisicosLibres(fechaInicioParseada, fechaFinalParseada, capacidad);
 		
 		LinkedList<EspacioFisicoExtendido> extendido = new LinkedList<>();
 		for (EspacioFisico es : espaciosLibres) {
@@ -147,7 +144,7 @@ public class ControladorEspacioFisico {
 	public Response buscarEspaciosPorPropietario(@QueryParam("propietario") String propietario) 
 	        throws RepositorioException {
 
-	    List<EspacioFisico> espacios = servicio.obtenerEspaciosPorPropietario(propietario); //Dudas de si aplicar DTO o no
+	    List<EspacioFisico> espacios = servicio.obtenerEspaciosPorPropietario(propietario); 
 	    
 	    List<EspacioFisicoExtendido> extendido = new LinkedList<>();
 	    for (EspacioFisico es : espacios) {

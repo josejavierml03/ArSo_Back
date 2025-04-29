@@ -22,10 +22,11 @@ public static void main(String[] args) {
 
         EspacioFisico espacio = new EspacioFisico(
                 "Auditorio Central",
-                "Av. Siempre Viva 742",
-                "Espacio amplio con buena acústica"
+                "Calle Principal 123",
+                "Auditorio para conferencias",
+                300
         );
-
+        
         espacio = repositorioEspacio.save(espacio);
 
         Evento evento = new Evento(

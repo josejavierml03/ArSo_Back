@@ -51,8 +51,4 @@ public class Ocupacion {
 		this.espacioFisico = espacioFisico;
 	}
 
-
-
-	
-	
 }

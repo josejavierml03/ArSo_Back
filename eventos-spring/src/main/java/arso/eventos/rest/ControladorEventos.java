@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -31,6 +32,9 @@ public class ControladorEventos {
     
 	@Autowired
 	private EventoResumenAssembler eventoResumenAssembler;
+	
+	@Autowired
+	private PagedResourcesAssembler<EspacioLibreDto> pagedResourcesAssemblerEspacioFisico;
 
     @PostMapping
     public ResponseEntity<Void> altaEvento(@Valid @RequestBody CrearEventoDto dto) throws Exception {
@@ -90,4 +94,24 @@ public class ControladorEventos {
 				 .withSelfRel());
 		return model;
     }
+    
+    @GetMapping("/{id}/ocupacion/activa")
+    public ResponseEntity<Boolean> tieneOcupacionesActivas(@PathVariable String id) throws Exception {
+        boolean resultado = servicio.obtenerOcupacionesActivasPorEspacio(id);
+        return ResponseEntity.ok(resultado);   
+    } 
+    
+    @GetMapping("/espacio/libre")
+    public PagedModel<EntityModel<EspacioLibreDto>> obtenerEspaciosLibres(
+            @RequestParam("fechaInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
+            @RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin,
+            @RequestParam("capacidad") int capacidad,
+            Pageable paginacion) {
+
+	
+        List<EspacioLibreDto> espaciosLibres = servicio.obtenerIdsEspaciosLibres(fechaInicio, fechaFin,capacidad);
+        Page<EspacioLibreDto> resultado = servicio.convertirAPaginable(espaciosLibres, paginacion);
+        return this.pagedResourcesAssemblerEspacioFisico.toModel(resultado);
+    }
+
 }

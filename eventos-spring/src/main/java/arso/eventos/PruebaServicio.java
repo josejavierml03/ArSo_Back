@@ -18,11 +18,11 @@ public class PruebaServicio {
 
 	        IServicioEventos servicio = contexto.getBean(IServicioEventos.class);
 
-	        String nombre = "Seminario de Innovación";
+	        String nombre = "PruebaO";
 	        String descripcion = "Charla sobre innovación tecnológica";
 	        String organizador = "Juan Pérez";
 	        Categoria categoria = Categoria.ACADEMICOS;
-	        LocalDateTime fechaInicio = LocalDateTime.now().plusDays(2);
+	        LocalDateTime fechaInicio = LocalDateTime.now();
 	        LocalDateTime fechaFin = fechaInicio.plusHours(3);
 	        int plazas = 100;
 	        String idEspacio = "297ee716966576cc01966576cf880000"; 
@@ -34,7 +34,7 @@ public class PruebaServicio {
 	        LocalDateTime nuevaFechaFin = nuevaFechaInicio.plusHours(2);
 	        int nuevasPlazas = 120;
 
-	        servicio.modificarEvento(String.valueOf(idEvento), nuevaFechaInicio, nuevaFechaFin, nuevasPlazas, null, "Descripción actualizada");
+	        servicio.modificarEvento(String.valueOf(idEvento), nuevaFechaInicio, nuevaFechaFin, nuevasPlazas, "297ee716966576cc01966576cf880000", "Descripción actualizada");
 	        System.out.println("Evento modificado.");
 
 	        int mes = LocalDateTime.now().getMonthValue();

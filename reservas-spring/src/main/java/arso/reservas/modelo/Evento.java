@@ -8,8 +8,7 @@ public class Evento {
     private boolean cancelado;
     private List<Reserva> reservas;
 
-    public Evento(String id, int plazasDisponibles, boolean cancelado, List<Reserva> reservas) {
-        this.id = id;
+    public Evento(int plazasDisponibles, boolean cancelado, List<Reserva> reservas) {
         this.plazasDisponibles = plazasDisponibles;
         this.cancelado = cancelado;
         this.reservas = reservas;

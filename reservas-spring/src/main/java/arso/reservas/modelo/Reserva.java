@@ -7,8 +7,7 @@ public class Reserva {
     private boolean cancelada;
     private Evento evento;
 
-    public Reserva(String id, String idUsuario, int plazasReservadas, boolean cancelada, Evento evento) {
-        this.id = id;
+    public Reserva(String idUsuario, int plazasReservadas, boolean cancelada, Evento evento) {
         this.idUsuario = idUsuario;
         this.plazasReservadas = plazasReservadas;
         this.cancelada = cancelada;

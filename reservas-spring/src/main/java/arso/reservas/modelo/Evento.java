@@ -3,7 +3,8 @@ package arso.reservas.modelo;
 import java.util.List;
 
 public class Evento {
-    private String id;
+   
+	private String id;
     private int plazasDisponibles;
     private boolean cancelado;
     private List<Reserva> reservas;
@@ -45,4 +46,10 @@ public class Evento {
     public void setReservas(List<Reserva> reservas) {
         this.reservas = reservas;
     }
+    
+    @Override
+   	public String toString() {
+   		return "Evento [id=" + id + ", plazasDisponibles=" + plazasDisponibles + ", cancelado=" + cancelado
+   				+ ", reservas=" + reservas + "]";
+   	}
 }

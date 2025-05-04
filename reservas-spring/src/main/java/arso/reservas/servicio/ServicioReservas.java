@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import arso.reservas.modelo.Evento;
 import arso.reservas.modelo.Reserva;
+import arso.reservas.repositorio.RepositorioEventos;
 import arso.reservas.repositorio.RepositorioReservas;
 import arso.reservas.repositorio.RepositorioReservasMongo;
 import repositorio.EntidadNoEncontrada;
@@ -17,14 +19,16 @@ import repositorio.EntidadNoEncontrada;
 public class ServicioReservas implements IServicioReservas{
 
 	private final RepositorioReservas repositorioReservas;
+	private final RepositorioEventos repositorioEventos;
 
     @Autowired
-    public ServicioReservas(RepositorioReservas repositorioReservas) {
+    public ServicioReservas(RepositorioReservas repositorioReservas, RepositorioEventos repositorioEventos) {
         this.repositorioReservas = repositorioReservas;
+        this.repositorioEventos = repositorioEventos;
     }
 
     @Override
-    public String Reservar(String idEvento, String idUsuario, int plazas) {
+    public String Reservar(String idEvento, String idUsuario, int plazas) throws EntidadNoEncontrada {
     	
     	if (idEvento == null || idEvento.isEmpty())
 			throw new IllegalArgumentException("idEvento: no debe ser nulo ni vacio");
@@ -35,7 +39,22 @@ public class ServicioReservas implements IServicioReservas{
 		if (plazas < 0)
 			throw new IllegalArgumentException("plazas: no debe ser un numero negativo");
 		
-        Reserva reserva = new Reserva(idUsuario, plazas, false, null);
+		Optional<Evento> resultado = repositorioEventos.findById(idEvento);
+		if (resultado.isPresent() == false)
+			throw new EntidadNoEncontrada("No existe evento con id: " + idEvento);
+		
+		Evento evento = resultado.get();
+		if (evento.isCancelado()) 
+	        throw new IllegalStateException("El evento está cancelado");
+	    
+		if (evento.getPlazasDisponibles() < plazas) 
+		    throw new IllegalStateException("No hay suficientes plazas disponibles");
+		
+        Reserva reserva = new Reserva(idUsuario, plazas, false, evento);
+        
+        evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazas);
+        evento.getReservas().add(reserva);
+        repositorioEventos.save(evento);
 
         String id = repositorioReservas.save(reserva).getId();
         

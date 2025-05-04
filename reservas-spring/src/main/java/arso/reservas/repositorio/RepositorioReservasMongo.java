@@ -1,7 +1,5 @@
 package arso.reservas.repositorio;
 
-import java.util.List;
-
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import arso.reservas.modelo.Reserva;

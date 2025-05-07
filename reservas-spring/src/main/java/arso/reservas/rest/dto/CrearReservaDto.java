@@ -1,8 +1,17 @@
 package arso.reservas.rest.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO para crear la Reserca")
 public class CrearReservaDto {
+	
+	@Schema(description = "Identificador del evento en el que se realiza la reserva")
     private String idEvento;
+	
+	@Schema(description = "Identificador del usuario que realiza la reserva")
     private String idUsuario;
+    
+	@Schema(description = "Numero de plazas a reservar")
     private int plazas;
 
     public CrearReservaDto() {

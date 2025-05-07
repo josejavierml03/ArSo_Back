@@ -6,12 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import arso.reservas.modelo.Evento;
 import arso.reservas.modelo.Reserva;
 import arso.reservas.repositorio.RepositorioEventos;
 import arso.reservas.repositorio.RepositorioReservas;
-import arso.reservas.repositorio.RepositorioReservasMongo;
 import repositorio.EntidadNoEncontrada;
 
 @Service
@@ -80,7 +81,16 @@ public class ServicioReservas implements IServicioReservas{
 		if (id == null || id.isEmpty())
 			throw new IllegalArgumentException("id: no debe ser nulo ni vacio");
 		
-		return repositorioReservas.findByEvento_Id(id);
+		List<Reserva> reservas = repositorioReservas.findByEvento_Id(id);
+		if (reservas.isEmpty()) {
+		    throw new EntidadNoEncontrada("No hay reservas para el evento con id: " + id);
+		}
+		return reservas;
+	}
+	
+	public Page<Reserva> getListadoPaginado(Pageable pageable, String id) {
+		 
+		 return repositorioReservas.findByEvento_Id(id, pageable);
 	}
 
 

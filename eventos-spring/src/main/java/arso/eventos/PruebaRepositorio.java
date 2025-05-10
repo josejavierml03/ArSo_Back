@@ -23,7 +23,6 @@ public static void main(String[] args) {
         EspacioFisico espacio = new EspacioFisico(
                 "Auditorio Central",
                 "Calle Principal 123",
-                "Auditorio para conferencias",
                 300
         );
         

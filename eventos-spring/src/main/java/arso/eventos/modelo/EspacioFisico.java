@@ -7,16 +7,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 
 import javax.persistence.Id;
 
-import org.hibernate.annotations.GenericGenerator;
-
 @Entity
 public class EspacioFisico {
-	@Id @GeneratedValue(generator="system-uuid")
-	@GenericGenerator(name="system-uuid", strategy = "uuid")
+	@Id
 	private String id;
     private String nombre;
     private String direccion;
@@ -26,7 +22,7 @@ public class EspacioFisico {
     private Estado estado;
     private int capacidad;
 
-    public EspacioFisico(String nombre, String direccion,String descripcion,int capacidad) {
+    public EspacioFisico(String nombre, String direccion,int capacidad) {
 
         this.nombre = nombre;
         this.direccion = direccion;

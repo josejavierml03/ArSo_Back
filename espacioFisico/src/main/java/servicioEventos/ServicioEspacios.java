@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import RabbitMQ.PublicadorEventos;
+import RabbitMQ.PublicadorEventosRabbitMQ;
 import dominio.EspacioFisico;
 import dominio.Estado;
 import dominio.PuntoDeInteres;
@@ -22,6 +25,8 @@ public class ServicioEspacios implements IServicioEspacios{
 	
 	private Repositorio<EspacioFisico, String> repositorio = FactoriaRepositorios.getRepositorio(EspacioFisico.class);
 	RepositorioEspacioAdHoc repositorioAH =  FactoriaRepositorios.getRepositorio(EspacioFisico.class);
+	private PublicadorEventos publicador = new PublicadorEventosRabbitMQ();
+
 
 	@Override
 	public String altaDeUnEspacioFisico(String nombre, String propietario, int capacidad, String direccion,
@@ -45,6 +50,15 @@ public class ServicioEspacios implements IServicioEspacios{
 		EspacioFisico espacioFisico = new EspacioFisico(nombre, propietario, capacidad, direccion, longitud, latitud, descripcion);
 			
 		String id = repositorio.add(espacioFisico);
+		
+		Map<String, Object> datosEvento = Map.of(
+			    "nombre", nombre,
+			    "propietario", propietario,
+			    "capacidad", capacidad,
+			    "direccion", direccion,
+			    "estado", espacioFisico.getEstado().toString()
+			);
+		publicador.publicar("espacio-creado", id, datosEvento);
 			
 		return id;
 	}
@@ -84,6 +98,12 @@ public class ServicioEspacios implements IServicioEspacios{
 	    if (descripcion != null && !descripcion.isEmpty()) {
 	        espacio.setDescripcion(descripcion);
 	    }
+	    
+	    publicador.publicar("espacio-modificado", espacio.getId(), Map.of(
+	    	    "nombre", espacio.getNombre(),
+	    	    "capacidad", espacio.getCapacidad(),
+	    	    "descripcion", espacio.getDescripcion()
+	    	));
 
 	    repositorio.update(espacio);
 	}
@@ -111,6 +131,11 @@ public class ServicioEspacios implements IServicioEspacios{
 			throw new IllegalArgumentException("este espacioFisico ya esta dado de baja");
 		
 		espacio.setEstado(Estado.CERRADO_TEMPORALMENTE);
+		
+		publicador.publicar("espacio-desactivado", espacio.getId(), Map.of(
+			    "estado", espacio.getEstado().toString()
+			));
+
 		repositorio.update(espacio);
 		
 	}
@@ -128,6 +153,10 @@ public class ServicioEspacios implements IServicioEspacios{
 			throw new IllegalArgumentException("este espacioFisico ya esta activo");
 		
 		espacio.setEstado(Estado.ACTIVO);
+		publicador.publicar("espacio-activado", espacio.getId(), Map.of(
+			    "estado", espacio.getEstado().toString()
+			));
+
 		repositorio.update(espacio);
 		
 	}

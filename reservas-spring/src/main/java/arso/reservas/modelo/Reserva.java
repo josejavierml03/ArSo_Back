@@ -1,6 +1,7 @@
 package arso.reservas.modelo;
 
 public class Reserva {
+	
     private String id;
     private String idUsuario;
     private int plazasReservadas;

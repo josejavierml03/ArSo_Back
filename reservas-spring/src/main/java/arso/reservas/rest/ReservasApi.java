@@ -19,7 +19,7 @@ public interface ReservasApi {
 
 	 @Operation(summary = "Obtener reserva", description = "Obtiene una reserva por su id")
 	 @GetMapping("/{id}")
-	 public EntityModel<ReservaDto> getReservaById(@PathVariable String id) throws Exception;
+	 public ReservaDto getReservaById(@PathVariable String id) throws Exception;
 	 
 	 @Operation(summary = "Crear reserva", description = "Crea una reserva con los datos proporcionados")
 	 @PostMapping

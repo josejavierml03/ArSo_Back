@@ -24,7 +24,7 @@ import arso.reservas.servicio.ServicioReservas;
 
 @RestController
 @RequestMapping("/reservas")
-public class ControladorReservas {
+public class ControladorReservas implements ReservasApi {
 	
 	@Autowired
 	private IServicioReservas servicio;

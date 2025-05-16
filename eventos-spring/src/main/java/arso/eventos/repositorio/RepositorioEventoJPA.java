@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import arso.eventos.modelo.Evento;
-import arso.eventos.rest.dto.EspacioLibreDto;
 
 @Repository
 public interface RepositorioEventoJPA
@@ -29,9 +28,9 @@ public interface RepositorioEventoJPA
 		    "  WHERE e.fecha_inicio < :fechaFin AND e.fecha_fin > :fechaInicio" +
 		    ") " +
 		    "AND ef.capacidad >= :capacidadMin", nativeQuery = true)
-		List<Object[]> findIdsEspaciosLibresEntre(@Param("fechaInicio") LocalDateTime fechaInicio,
-		                                           @Param("fechaFin") LocalDateTime fechaFin,
-		                                           @Param("capacidadMin") int capacidadMin);
+	List<Object[]> findIdsEspaciosLibresEntre(@Param("fechaInicio") LocalDateTime fechaInicio,
+		                                      @Param("fechaFin") LocalDateTime fechaFin,
+		                                      @Param("capacidadMin") int capacidadMin);
 
 }
 

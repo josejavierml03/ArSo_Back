@@ -13,7 +13,7 @@ import arso.reservas.modelo.Evento;
 import arso.reservas.modelo.Reserva;
 import arso.reservas.repositorio.RepositorioEventos;
 import arso.reservas.repositorio.RepositorioReservas;
-import repositorio.EntidadNoEncontrada;
+import arso.reservas.repositorio.EntidadNoEncontrada;
 
 @Service
 @Transactional

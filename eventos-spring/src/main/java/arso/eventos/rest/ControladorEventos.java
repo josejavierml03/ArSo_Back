@@ -33,9 +33,6 @@ public class ControladorEventos {
 	@Autowired
 	private EventoResumenAssembler eventoResumenAssembler;
 	
-	@Autowired
-	private PagedResourcesAssembler<EspacioLibreDto> pagedResourcesAssemblerEspacioFisico;
-
     @PostMapping
     public ResponseEntity<Void> altaEvento(@Valid @RequestBody CrearEventoDto dto) throws Exception {
         String id = servicio.altaEvento(dto.getNombre(),
@@ -102,16 +99,13 @@ public class ControladorEventos {
     } 
     
     @GetMapping("/espacio/libre")
-    public PagedModel<EntityModel<EspacioLibreDto>> obtenerEspaciosLibres(
+    public  List<EspacioLibreDto> obtenerEspaciosLibres(
             @RequestParam("fechaInicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
             @RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin,
-            @RequestParam("capacidad") int capacidad,
-            Pageable paginacion) {
+            @RequestParam("capacidad") int capacidad) {
 
 	
-        List<EspacioLibreDto> espaciosLibres = servicio.obtenerIdsEspaciosLibres(fechaInicio, fechaFin,capacidad);
-        Page<EspacioLibreDto> resultado = servicio.convertirAPaginable(espaciosLibres, paginacion);
-        return this.pagedResourcesAssemblerEspacioFisico.toModel(resultado);
+    	return servicio.obtenerIdsEspaciosLibres(fechaInicio, fechaFin, capacidad);
     }
 
 }

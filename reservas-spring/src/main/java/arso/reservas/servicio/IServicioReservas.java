@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import arso.reservas.modelo.Reserva;
-import repositorio.EntidadNoEncontrada;
+import arso.reservas.repositorio.*;
 
 public interface IServicioReservas {
 	

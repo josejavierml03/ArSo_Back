@@ -4,9 +4,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
     <persistence-unit name="espacioFisico">
-        <class>dominio.EspacioFisico</class>
-        <class>dominio.Ocupacion</class>
-        <class>dominio.PuntoDeInteres</class>
+        <class>espacioFisico.dominio.EspacioFisico</class>
+        <class>espacioFisico.dominio.PuntoDeInteres</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
             <property name="javax.persistence.jdbc.user" value="root" />

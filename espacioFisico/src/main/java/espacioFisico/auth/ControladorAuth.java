@@ -12,7 +12,7 @@ import espacioFisico.servicioEventos.IServicioUsuarios;
 @Path("auth")
 public class ControladorAuth {
 
-	// curl -X POST -H "Content-Type: application/x-www-form-urlencoded"  -d "username=lucia&password=pass" http://localhost:8080/api/auth/login
+	// curl -X POST -H "Content-Type: application/x-www-form-urlencoded"  -d "username=ana&password=abcd" http://localhost:8080/api/auth/login
 	
 	// eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmEiLCJyb2xlcyI6IlBST1BJRVRBUklPX0VTUEFDSU9TIiwiZXhwIjoxNzQ1NDY0OTgwfQ.mKOVEtCHYY6PF4RvW471fRkrjCERCOZ94qgNFv4ob1c
 	

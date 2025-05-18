@@ -1,55 +1,62 @@
 package arso.reservas.modelo;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
 public class Evento {
-   
+
 	private String id;
-    private int plazasDisponibles;
-    private boolean cancelado;
-    private List<Reserva> reservas;
+	private int plazasDisponibles;
+	private boolean cancelado;
+	private List<Reserva> reservas;
 
-    public Evento(int plazasDisponibles, boolean cancelado, List<Reserva> reservas) {
-        this.plazasDisponibles = plazasDisponibles;
-        this.cancelado = cancelado;
-        this.reservas = reservas;
-    }
+	public Evento(int plazasDisponibles, boolean cancelado) {
+		this.plazasDisponibles = plazasDisponibles;
+		this.cancelado = cancelado;
+		this.reservas = new ArrayList<>();
+	}
+	public Evento() {
+		this.reservas = new ArrayList<>();
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public int getPlazasDisponibles() {
-        return plazasDisponibles;
-    }
+	public int getPlazasDisponibles() {
+		return plazasDisponibles;
+	}
 
-    public void setPlazasDisponibles(int plazasDisponibles) {
-        this.plazasDisponibles = plazasDisponibles;
-    }
+	public void setPlazasDisponibles(int plazasDisponibles) {
+		this.plazasDisponibles = plazasDisponibles;
+	}
 
-    public boolean isCancelado() {
-        return cancelado;
-    }
+	public boolean isCancelado() {
+		return cancelado;
+	}
 
-    public void setCancelado(boolean cancelado) {
-        this.cancelado = cancelado;
-    }
+	public void setCancelado(boolean cancelado) {
+		this.cancelado = cancelado;
+	}
 
-    public List<Reserva> getReservas() {
-        return reservas;
-    }
+	public List<Reserva> getReservas() {
+		return reservas;
+	}
 
-    public void setReservas(List<Reserva> reservas) {
-        this.reservas = reservas;
-    }
-    
-    @Override
-   	public String toString() {
-   		return "Evento [id=" + id + ", plazasDisponibles=" + plazasDisponibles + ", cancelado=" + cancelado
-   				+ ", reservas=" + reservas + "]";
-   	}
+	public void setReservas(List<Reserva> reservas) {
+		this.reservas = reservas;
+	}
+
+	@Override
+	public String toString() {
+		return "Evento [id=" + id + ", plazasDisponibles=" + plazasDisponibles + ", cancelado=" + cancelado
+				+ ", reservas=" + reservas + "]";
+	}
 }

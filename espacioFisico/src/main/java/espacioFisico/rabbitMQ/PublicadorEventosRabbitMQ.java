@@ -21,7 +21,16 @@ public class PublicadorEventosRabbitMQ implements PublicadorEventos {
     public PublicadorEventosRabbitMQ() {
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            String url = "amqps://lcirmeef:4hti3qfThjZ9N5xb_3Jh_rTMYVB71Jpf@rat.rmq2.cloudamqp.com/lcirmeef";
+            String rabbitHost = System.getenv("SPRING_RABBITMQ_HOST");
+            String rabbitPort = System.getenv("SPRING_RABBITMQ_PORT");
+            String rabbitUsername = System.getenv("SPRING_RABBITMQ_USERNAME");
+            String rabbitPassword = System.getenv("SPRING_RABBITMQ_PASSWORD");
+
+            if (rabbitHost == null || rabbitPort == null || rabbitUsername == null || rabbitPassword == null) {
+                throw new RuntimeException("Missing RabbitMQ environment variables.");
+            }
+
+            String url = String.format("amqp://%s:%s@%s:%s", rabbitUsername, rabbitPassword, rabbitHost, rabbitPort);
             factory.setUri(url);
             Connection connection = factory.newConnection();
             this.canal = connection.createChannel();

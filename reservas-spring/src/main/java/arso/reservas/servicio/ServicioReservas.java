@@ -31,34 +31,34 @@ public class ServicioReservas implements IServicioReservas{
     @Override
     public String Reservar(String idEvento, String idUsuario, int plazas) throws EntidadNoEncontrada {
     	
-    	if (idEvento == null || idEvento.isEmpty())
+		if (idEvento == null || idEvento.isEmpty())
 			throw new IllegalArgumentException("idEvento: no debe ser nulo ni vacio");
 
-		if (idEvento == null || idEvento.isEmpty())
+		if (idUsuario == null || idUsuario.isEmpty())
 			throw new IllegalArgumentException("idUsuario: no debe ser nulo mi vacio");
-		
+
 		if (plazas < 0)
 			throw new IllegalArgumentException("plazas: no debe ser un numero negativo");
-		
+
 		Optional<Evento> resultado = repositorioEventos.findById(idEvento);
 		if (resultado.isPresent() == false)
 			throw new EntidadNoEncontrada("No existe evento con id: " + idEvento);
-		
+
 		Evento evento = resultado.get();
-		if (evento.isCancelado()) 
-	        throw new IllegalStateException("El evento está cancelado");
-	    
-		if (evento.getPlazasDisponibles() < plazas) 
-		    throw new IllegalStateException("No hay suficientes plazas disponibles");
+		if (evento.isCancelado())
+			throw new IllegalStateException("El evento está cancelado");
+
+		if (evento.getPlazasDisponibles() < plazas)
+			throw new IllegalStateException("No hay suficientes plazas disponibles");
+		
+		if (evento.getId() == null) 
+			throw new IllegalStateException("El evento no tiene un ID válido");
 		
         Reserva reserva = new Reserva(idUsuario, plazas, false, evento);
-        
+        String id = repositorioReservas.save(reserva).getId();
         evento.setPlazasDisponibles(evento.getPlazasDisponibles() - plazas);
         evento.getReservas().add(reserva);
         repositorioEventos.save(evento);
-
-        String id = repositorioReservas.save(reserva).getId();
-        
         return id;
     }
 

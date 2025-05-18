@@ -1,11 +1,18 @@
 package arso.reservas.modelo;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+@Document
 public class Reserva {
 	
     private String id;
     private String idUsuario;
     private int plazasReservadas;
     private boolean cancelada;
+    @JsonIgnore  
+    @DBRef
     private Evento evento;
 
     public Reserva(String idUsuario, int plazasReservadas, boolean cancelada, Evento evento) {

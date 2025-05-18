@@ -1,20 +1,24 @@
 package arso.reservas.rest;
 
+import java.net.URI;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 
 import arso.reservas.modelo.Reserva;
 import arso.reservas.rest.dto.CrearReservaDto;
@@ -39,18 +43,28 @@ public class ControladorReservas implements ReservasApi {
 	public ControladorReservas(ServicioReservas servicio) {
 		this.servicio = servicio;
 	}
-	
+
 	@GetMapping("/{id}")
-	public ReservaDto getReservaById(@PathVariable String id)throws Exception {
-		
-	Reserva reserva = this.servicio.getReserva(id);
-	
-	return ReservaDto.fromEntity(reserva);
+	public EntityModel<ReservaDto> getReservaById(@PathVariable String id)throws Exception {
+
+		Reserva reserva = this.servicio.getReserva(id);
+		ReservaDto reservaDto = ReservaDto.fromEntity(reserva);
+		EntityModel<ReservaDto> model = EntityModel.of(reservaDto);
+		model.add(
+				WebMvcLinkBuilder.linkTo(
+						WebMvcLinkBuilder
+						.methodOn(ControladorReservas.class)
+						.getReservaById(id))
+				.withSelfRel());
+		return model;
 	}
 	
 	@PostMapping
-	public String crearReserva(@Valid @RequestBody CrearReservaDto dto) throws Exception {
-	    return this.servicio.Reservar(dto.getIdEvento(), dto.getIdUsuario(), dto.getPlazas());
+	public ResponseEntity<Void> crearReserva(@Valid @RequestBody CrearReservaDto dto) throws Exception {
+	    String id = this.servicio.Reservar(dto.getIdEvento(), dto.getIdUsuario(), dto.getPlazas());
+	    URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest()
+	 			.path("/{id}").buildAndExpand(id).toUri();        
+        return ResponseEntity.created(nuevaURL).build();
 	}
 	
 	@GetMapping("/evento/{idEvento}")

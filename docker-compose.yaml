@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+    ports:
+      - "8083:8081"  
+    depends_on:
+      - mongodb
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  espaciofisico:
+    build: ./espacioFisico
+    depends_on:
+      - mysql
+      - rabbitmq
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/espacios
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      SPRING_RABBITMQ_VIRTUAL_HOST: /
+    ports:
+      - "8080:8080"
+
+  eventos:
+    build: ./eventos-spring
+    depends_on:
+      - mysql
+      - rabbitmq
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eventos?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      SPRING_RABBITMQ_VIRTUAL_HOST: /
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    entrypoint: ["sh", "-c", "until nc -z mysql 3306; do echo 'Waiting for MySQL...'; sleep 2; done; exec java -jar /app.jar"]
+
+  reservas:
+    build: ./reservas-spring
+    depends_on:
+      - mongodb
+      - rabbitmq
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/reservas
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      SPRING_RABBITMQ_VIRTUAL_HOST: /
+      SERVER_PORT: 8082
+    ports:
+      - "8082:8082"
+
+  pasarela:
+    build: ./pasarela
+    depends_on:
+      - espaciofisico
+      - eventos
+      - reservas
+    ports:
+      - "8090:8090"
+    environment:
+      ROUTE_RESERVAS: http://reservas:8082/api/reservas
+      ROUTE_EVENTOS: http://eventos:8081/api/eventos
+      ROUTE_ESPACIOS: http://espaciofisico:8080/api/espacios
+
+volumes:
+  mysql_data:
+  mongo_data:

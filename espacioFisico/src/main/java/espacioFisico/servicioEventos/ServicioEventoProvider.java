@@ -9,7 +9,7 @@ public class ServicioEventoProvider {
 
     static {
         Retrofit retrofit = new Retrofit.Builder()
-        		.baseUrl("http://localhost:8081/eventos/")
+        		.baseUrl("http://eventos:8081/eventos/")
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 

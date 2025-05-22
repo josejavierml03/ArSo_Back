@@ -100,8 +100,8 @@ services:
     ports:
       - "8090:8090"
     environment:
-      ROUTE_RESERVAS: http://reservas:8082/api/reservas
-      ROUTE_EVENTOS: http://eventos:8081/api/eventos
+      ROUTE_RESERVAS: http://reservas:8082/reservas
+      ROUTE_EVENTOS: http://eventos:8081/eventos
       ROUTE_ESPACIOS: http://espaciofisico:8080/api/espacios
 
 volumes:

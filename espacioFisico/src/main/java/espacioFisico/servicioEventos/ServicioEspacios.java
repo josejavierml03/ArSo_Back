@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 import espacioFisico.dominio.EspacioFisico;
 import espacioFisico.dominio.Estado;
@@ -18,6 +18,7 @@ import espacioFisico.repositorio.Repositorio;
 import espacioFisico.repositorio.RepositorioException;
 import espacioFisico.repositorioEventos.RepositorioEspacioAdHoc;
 import espacioFisico.rest.dto.EspacioLibreDto;
+import java.util.*;
 
 public class ServicioEspacios implements IServicioEspacios{
 	
@@ -70,10 +71,24 @@ public class ServicioEspacios implements IServicioEspacios{
 		
 		if (puntos == null || puntos.isEmpty())
 			throw new IllegalArgumentException("punots: no debe ser nulo ni vacio");
-		
+
 		EspacioFisico espacio = repositorio.getById(id);
 		espacio.setPuntosDeInteres(puntos);
 		repositorio.update(espacio);
+		List<Map<String, Object>> puntosDto = new ArrayList<>();
+	    for (PuntoDeInteres p : puntos) {
+	        Map<String, Object> dto = new java.util.HashMap<>();
+	        dto.put("nombre", p.getNombre());
+	        dto.put("descripcion", p.getDescripcion());
+	        dto.put("distancia", p.getDistancia());
+	        dto.put("urlAWikipedia", p.getUrlAWikipedia());
+	        puntosDto.add(dto);
+	    }
+
+	    Map<String, Object> datosEvento = new java.util.HashMap<>();
+	    datosEvento.put("puntos", puntosDto);
+
+	    publicador.publicar("espacio-asignarPuntos", id, datosEvento);
 		
 	}
 
@@ -112,11 +127,11 @@ public class ServicioEspacios implements IServicioEspacios{
 		if (id == null || id.isEmpty())
 			throw new IllegalArgumentException("id: no debe ser nulo ni vacio");
 		 try {
-		        boolean activas = ServicioEventoProvider.getClient()
+		        Boolean activas = ServicioEventoProvider.getClient()
 		            .tieneOcupacionesActivas(id)
 		            .execute()
 		            .body();
-
+		        
 		        if (activas) {
 		            throw new IllegalArgumentException("este espacioFisico tiene ocupaciones activas");
 		        }
@@ -174,7 +189,7 @@ public class ServicioEspacios implements IServicioEspacios{
 	            .obtenerEspaciosLibres(fechaInicioStr, fechaFinStr, capacidadMinima)
 	            .execute()
 	            .body();
-	        if (respuesta == null ||  respuesta.isEmpty()) {
+	        if (respuesta == null) {
 	        	throw new RepositorioException("No hay espacios libres");
 	        }
 	        List<EspacioFisico> espaciosFisicos = new ArrayList<>();

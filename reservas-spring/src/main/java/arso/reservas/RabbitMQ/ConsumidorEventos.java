@@ -26,7 +26,7 @@ public class ConsumidorEventos {
 			Evento eventoAlta;
 
 			switch (tipo) {
-			case "altaEvento":
+			case "evento-creado":
 				eventoAlta = new Evento();
 				eventoAlta.setId(id);
 				eventoAlta.setPlazasDisponibles((Integer) datos.get("plazas"));
@@ -34,7 +34,7 @@ public class ConsumidorEventos {
 
 				repositorio.save(eventoAlta);
 
-			case "modificarEvento":
+			case "evento-modificado":
 				eventoAlta = repositorio.findById(id)
 						.orElseThrow(() -> new RuntimeException("Evento no encontrado con ID: " + id));
 
@@ -44,13 +44,12 @@ public class ConsumidorEventos {
 				
 				repositorio.save(eventoAlta);
 
-			case "cancelarEvento":
+			case "evento-cancelado":
 				eventoAlta = repositorio.findById(id)
 						.orElseThrow(() -> new RuntimeException("Evento no encontrado con ID: " + id));
 
 				eventoAlta.setCancelado((Boolean) datos.get("cancelado"));
 
-				// Guardar el evento actualizado
 				repositorio.save(eventoAlta);
 
 			default:

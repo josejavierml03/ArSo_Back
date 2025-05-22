@@ -10,6 +10,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,7 +44,8 @@ public class ControladorReservas implements ReservasApi {
 	public ControladorReservas(ServicioReservas servicio) {
 		this.servicio = servicio;
 	}
-
+	
+	@PreAuthorize("hasRole('USUARIO')")
 	@GetMapping("/{id}")
 	public EntityModel<ReservaDto> getReservaById(@PathVariable String id)throws Exception {
 
@@ -59,6 +61,7 @@ public class ControladorReservas implements ReservasApi {
 		return model;
 	}
 	
+	@PreAuthorize("hasRole('USUARIO')")
 	@PostMapping
 	public ResponseEntity<Void> crearReserva(@Valid @RequestBody CrearReservaDto dto) throws Exception {
 	    String id = this.servicio.Reservar(dto.getIdEvento(), dto.getIdUsuario(), dto.getPlazas());
@@ -67,6 +70,7 @@ public class ControladorReservas implements ReservasApi {
         return ResponseEntity.created(nuevaURL).build();
 	}
 	
+	@PreAuthorize("hasRole('GESTOR_EVENTOS')")
 	@GetMapping("/evento/{idEvento}")
 	public PagedModel<EntityModel<Reserva>> getReservasPaginado(Pageable paginacion, @PathVariable String idEvento) throws Exception {
 		 

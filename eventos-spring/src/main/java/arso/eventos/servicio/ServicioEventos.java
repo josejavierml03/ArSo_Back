@@ -81,7 +81,7 @@ public class ServicioEventos implements IServicioEventos {
 		Map<String, Object> eventoRabbit = new HashMap<>();
 		eventoRabbit.put("plazas", evento.getPlazas());
 		eventoRabbit.put("cancelado", evento.isCancelado());
-		productorEventos.emitirEvento("altaEvento", evento.getId(), eventoRabbit);
+		productorEventos.emitirEvento("evento-creado", evento.getId(), eventoRabbit);
 
 		return id;
 
@@ -125,7 +125,7 @@ public class ServicioEventos implements IServicioEventos {
 		}
 		Map<String, Object> eventoRabbit = new HashMap<>();
 		eventoRabbit.put("plazas", evento.getPlazas());
-		productorEventos.emitirEvento("modificarEvento", evento.getId(), eventoRabbit);
+		productorEventos.emitirEvento("evento-modificado", evento.getId(), eventoRabbit);
 
 		repositorioEvento.save(evento);
 	}
@@ -145,7 +145,7 @@ public class ServicioEventos implements IServicioEventos {
 
 		Map<String, Object> eventoRabbit = new HashMap<>();
 		eventoRabbit.put("cancelado", evento.isCancelado());
-		productorEventos.emitirEvento("cancelarEvento", evento.getId(), eventoRabbit);
+		productorEventos.emitirEvento("evento-cancelado", evento.getId(), eventoRabbit);
 		repositorioEvento.save(evento);
 
 	}

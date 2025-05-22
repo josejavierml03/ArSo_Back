@@ -14,11 +14,11 @@ import arso.eventos.modelo.Evento;
 public interface RepositorioEventoJPA
 			extends RepositorioEvento, JpaRepository<Evento, String> {
 	@Override
-    @Query("SELECT e FROM Evento e " +
-           "JOIN e.ocupacion o " +
-           "WHERE FUNCTION('MONTH', o.fechaInicio) = :mes " +
-           "AND FUNCTION('YEAR', o.fechaInicio) = :año")
-    List<Evento> getEventosDelMes(@Param("mes") int mes, @Param("año") int año);
+	@Query("SELECT e FROM Evento e " +
+		       "JOIN e.ocupacion o " +
+		       "WHERE MONTH(o.fechaInicio) = :mes " +
+		       "AND YEAR(o.fechaInicio) = :año")
+	List<Evento> getEventosDelMes(@Param("mes") int mes, @Param("año") int año);
 	
 	@Query(value = "SELECT ef.id, ef.nombre " +
 		    "FROM espacio_fisico ef " +

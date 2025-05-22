@@ -1,6 +1,7 @@
 package arso.eventos.rest;
 
 import arso.eventos.modelo.Evento;
+import org.springframework.security.access.prepost.PreAuthorize;
 import arso.eventos.rest.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class ControladorEventos {
 	@Autowired
 	private EventoResumenAssembler eventoResumenAssembler;
 	
+	@PreAuthorize("hasRole('GESTOR_EVENTOS')")
     @PostMapping
     public ResponseEntity<Void> altaEvento(@Valid @RequestBody CrearEventoDto dto) throws Exception {
         String id = servicio.altaEvento(dto.getNombre(),
@@ -47,7 +49,8 @@ public class ControladorEventos {
 	 			.path("/{id}").buildAndExpand(id).toUri();        
         return ResponseEntity.created(nuevaURL).build();
     }
-
+	
+	@PreAuthorize("hasRole('GESTOR_EVENTOS')")
     @PatchMapping("/{id}")
     public ResponseEntity<Void> modificarEvento(@PathVariable String id,
                                                 @Valid @RequestBody ModificarEventoDto dto) throws Exception {
@@ -59,14 +62,16 @@ public class ControladorEventos {
         						 dto.getDescripcion());
         return ResponseEntity.noContent().build();
     }
-
+	
+	@PreAuthorize("hasRole('GESTOR_EVENTOS')")
     @PatchMapping("/{id}/ocupacion")
     public ResponseEntity<Void> cancelarEvento(@PathVariable String id)
     		throws Exception { 
         servicio.cancelarEvento(id);
         return ResponseEntity.noContent().build();
     }
-
+	
+	@PreAuthorize("hasAnyRole('GESTOR_EVENTOS','USUARIO')")
     @GetMapping
     public PagedModel<EntityModel<EventoResumen>>eventosDelMes(
             @RequestParam("mes") int mes,
@@ -77,7 +82,8 @@ public class ControladorEventos {
         Page<EventoResumen> resultado = servicio.convertirAPaginable(eventosR,paginacion);
         return this.pagedResourcesAssembler.toModel(resultado,eventoResumenAssembler);
     }
-
+	
+	@PreAuthorize("hasAnyRole('GESTOR_EVENTOS','USUARIO')")
     @GetMapping("/{id}")
     public EntityModel<EventoDto> getEvento(@PathVariable String id) throws Exception {
         Evento evento = servicio.getEvento(id);
@@ -104,7 +110,6 @@ public class ControladorEventos {
             @RequestParam("fechaFin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin,
             @RequestParam("capacidad") int capacidad) {
 
-	
     	return servicio.obtenerIdsEspaciosLibres(fechaInicio, fechaFin, capacidad);
     }
 

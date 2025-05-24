@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,47 +16,30 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.Claims;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws IOException, ServletException {
 
-    	String jwt = null;
+        String user = request.getHeader("X-User");
+        String rolesHeader = request.getHeader("X-Roles");
 
-        String auth = request.getHeader("Authorization");
-        if (auth != null && auth.startsWith("Bearer ")) {
-            jwt = auth.substring(7);
-        }
-
-        if (jwt == null && request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("jwt".equals(cookie.getName())) {
-                    jwt = cookie.getValue();
-                }
+        if (user != null && rolesHeader != null) {
+            String[] roles = rolesHeader.split(",");
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            for (String rol : roles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
             }
-        }
-        if (jwt != null) {
-            try {
-                Claims claims = JwtUtils.validateToken(jwt);
-                String[] roles = claims.get("roles", String.class).split(",");
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                for (String rol : roles)
-                	 authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-
-            } catch (Exception e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT inválido");
-                return;
-            }
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(user, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
-        
+
         chain.doFilter(request, response);
-        
     }
 }

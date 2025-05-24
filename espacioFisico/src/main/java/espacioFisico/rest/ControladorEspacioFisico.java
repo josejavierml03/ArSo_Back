@@ -110,7 +110,7 @@ public class ControladorEspacioFisico {
 	@GET
 	@Path("/libres")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("USUARIO")
+	@RolesAllowed({"USUARIO", "PROPIETARIO_ESPACIOS"})
 	public Response getListadoEspaciosLibres(@QueryParam("fechaInicio") String fechaInicio,
 								  @QueryParam("fechaFin")    String fechaFin,
 								  @QueryParam("capacidad") int capacidad) throws RepositorioException, EntidadNoEncontrada {
@@ -140,7 +140,7 @@ public class ControladorEspacioFisico {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("USUARIO")
+	@RolesAllowed({"USUARIO", "PROPIETARIO_ESPACIOS"})
 	public Response buscarEspaciosPorPropietario(@QueryParam("propietario") String propietario) 
 	        throws RepositorioException {
 
@@ -166,7 +166,7 @@ public class ControladorEspacioFisico {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed("USUARIO")
+	@RolesAllowed({"USUARIO", "PROPIETARIO_ESPACIOS"})
 	public Response recuperarEspacioFisico(@PathParam("id") String id)
 	        throws RepositorioException, EntidadNoEncontrada {
 

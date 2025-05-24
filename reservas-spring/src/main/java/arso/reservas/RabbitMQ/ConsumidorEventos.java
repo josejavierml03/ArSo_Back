@@ -1,11 +1,13 @@
 package arso.reservas.RabbitMQ;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import arso.reservas.modelo.Evento;
+import arso.reservas.modelo.Reserva;
 import arso.reservas.repositorio.RepositorioEventos;
 
 @Component
@@ -49,7 +51,11 @@ public class ConsumidorEventos {
 						.orElseThrow(() -> new RuntimeException("Evento no encontrado con ID: " + id));
 
 				eventoAlta.setCancelado((Boolean) datos.get("cancelado"));
-
+				List<Reserva> reservas  = eventoAlta.getReservas();
+				for (Reserva re : reservas) {
+					re.setCancelada(true);
+				}
+				
 				repositorio.save(eventoAlta);
 
 			default:

@@ -17,15 +17,28 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.netflix.zuul.context.RequestContext;
 import io.jsonwebtoken.Claims;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws IOException, ServletException {
 
-    	String jwt = null;
+        String path = request.getRequestURI();
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
+        if (path.equals("/auth/login")) {
+            chain.doFilter(request, response);
+            return;
+        }
+        String jwt = null;
 
         String auth = request.getHeader("Authorization");
         if (auth != null && auth.startsWith("Bearer ")) {
@@ -39,25 +52,34 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }
         }
+
         if (jwt != null) {
             try {
                 Claims claims = JwtUtils.validateToken(jwt);
+                String username = claims.getSubject();
                 String[] roles = claims.get("roles", String.class).split(",");
+
                 List<GrantedAuthority> authorities = new ArrayList<>();
-                for (String rol : roles)
-                	 authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
+                for (String rol : roles) {
+                    authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
+                }
 
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                RequestContext ctx = RequestContext.getCurrentContext();
+                ctx.addZuulRequestHeader("X-User", username);
+                ctx.addZuulRequestHeader("X-Roles", String.join(",", roles));
+                
+                request.setAttribute("claims", claims);
 
             } catch (Exception e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT inválido");
                 return;
             }
         }
-        
+
         chain.doFilter(request, response);
-        
     }
 }

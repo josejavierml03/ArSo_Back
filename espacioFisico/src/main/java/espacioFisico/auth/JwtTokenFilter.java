@@ -2,6 +2,7 @@ package espacioFisico.auth;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Priority;
@@ -16,63 +17,52 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import io.jsonwebtoken.Claims;
-
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class JwtTokenFilter implements ContainerRequestFilter {
 
-	@Context
-	private ResourceInfo resourceInfo;
-	
-	@Context
-	private HttpServletRequest servletRequest;
-	
-	@Override
-	public void filter(ContainerRequestContext requestContext) {
+    @Context
+    private ResourceInfo resourceInfo;
 
-		String path = requestContext.getUriInfo().getPath();
-		
-		 // Comprobamos si la ruta tiene la anotación @PermitAll
-		 if (resourceInfo.getResourceMethod().isAnnotationPresent(PermitAll.class)) {
-			 return; 
-		 }
-		
-		// rutas públicas
-		if (path.equals("auth/login")) {
-			return; // no se controla la autorización
-		}
+    @Context
+    private HttpServletRequest servletRequest;
 
-		// Implementación del control de autorización
-		String authorization = requestContext.getHeaderString("Authorization");
+    @Override
+    public void filter(ContainerRequestContext requestContext) {
+        String path = requestContext.getUriInfo().getPath();
 
-		if (authorization == null || !authorization.startsWith("Bearer ")) {
-			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
-					.entity("No se adjunta el token correctamente").build());
-		} else {
-			String token = authorization.substring("Bearer ".length()).trim();
-			try {
-				// Validar el token ...
-				Claims claims = JwtUtils.validateToken(token);
-				
-				this.servletRequest.setAttribute("claims", claims);
-				
-				Set<String> roles = new HashSet<>(Arrays.asList(claims.get("roles", String.class).split(",")));
+        if (resourceInfo.getResourceMethod().isAnnotationPresent(PermitAll.class)) {
+            return;
+        }
 
-				// Consulta si la operación está protegida por rol
-				if (this.resourceInfo.getResourceMethod().isAnnotationPresent(RolesAllowed.class)) {
+        if (path.equals("auth/login")) {
+            return;
+        }
 
-					String[] allowedRoles = resourceInfo.getResourceMethod().getAnnotation(RolesAllowed.class).value();
+        String user = servletRequest.getHeader("X-User");
+        String rolesHeader = servletRequest.getHeader("X-Roles");
 
-					if (roles.stream().noneMatch(userRole -> Arrays.asList(allowedRoles).contains(userRole))) {
-						requestContext.abortWith(
-								Response.status(Response.Status.FORBIDDEN).entity("no tiene rol de acceso").build());
-					}
-				}
-			} catch (Exception e) { // Error de validación
-				requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build());
-			}
-		}
+        if (user == null || rolesHeader == null) {
+            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
+                .entity("Faltan cabeceras de autenticación (X-User o X-Roles)").build());
+            return;
+        }
 
-	}
+        servletRequest.setAttribute("user", user);
+        servletRequest.setAttribute("roles", rolesHeader);
+
+
+        if (resourceInfo.getResourceMethod().isAnnotationPresent(RolesAllowed.class)) {
+            Set<String> userRoles = new HashSet<>(Arrays.asList(rolesHeader.split(",")));
+            List<String> allowedRoles = Arrays.asList(
+                resourceInfo.getResourceMethod().getAnnotation(RolesAllowed.class).value()
+            );
+
+            boolean autorizado = userRoles.stream().anyMatch(allowedRoles::contains);
+            if (!autorizado) {
+                requestContext.abortWith(Response.status(Response.Status.FORBIDDEN)
+                    .entity("No tiene rol de acceso").build());
+            }
+        }
+    }
 }

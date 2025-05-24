@@ -9,7 +9,7 @@ public class EventoResumen {
 
 	private String id;
 	private String nombre;
-	private String descipcion;
+	private String descripcion;
 	private LocalDateTime fechaInicio;
 	private Categoria categoria;
 	private String nombreEspacioFisico;
@@ -26,7 +26,7 @@ public class EventoResumen {
 
 	@Override
 	public String toString() {
-		return "EventoResumen [id=" + id + ", nombre=" + nombre + ", descipcion=" + descipcion + ", fechaInicio="
+		return "EventoResumen [id=" + id + ", nombre=" + nombre + ", descipcion=" + descripcion + ", fechaInicio="
 				+ fechaInicio + ", categoria=" + categoria + ", nombreEspacioFisico=" + nombreEspacioFisico
 				+ ", direccionEspacioFisico=" + direccionEspacioFisico + ", puntos=" + puntos + "]";
 	}
@@ -37,11 +37,11 @@ public class EventoResumen {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public String getDescipcion() {
-		return descipcion;
+	public String getDescripcion() {
+		return descripcion;
 	}
-	public void setDescipcion(String descipcion) {
-		this.descipcion = descipcion;
+	public void setDescripcion(String descipcion) {
+		this.descripcion = descipcion;
 	}
 	public LocalDateTime getFechaInicio() {
 		return fechaInicio;

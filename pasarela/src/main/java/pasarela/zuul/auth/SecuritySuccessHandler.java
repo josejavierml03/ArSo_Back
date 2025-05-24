@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
@@ -42,8 +41,13 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
 			respuesta.put("nombreCompleto", claims.get("nombreCompleto"));
 			respuesta.put("roles", claims.get("roles"));
 
-			response.setContentType("application/json");
-			new ObjectMapper().writeValue(response.getWriter(), respuesta);
+			String redirectUrl = String.format(
+		            "http://localhost:5173/oauth-success?token=%s&nombre=%s&roles=%s",
+		            token,
+		            claims.get("nombreCompleto"),
+		            claims.get("roles")
+		        );
+		        response.sendRedirect(redirectUrl);
 		} else {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Usuario de GitHub no autorizado");
 		}
@@ -51,8 +55,11 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
 
 	private Map<String, Object> fetchUserInfo(DefaultOAuth2User usuario) {
 		HashMap<String, Object> claims = new HashMap<String, Object>();
+		String login = (String) usuario.getAttributes().get("login");
+		String name = (String) usuario.getAttributes().get("name");
         claims.put("sub", usuario.getAttributes().get("login"));
         claims.put("roles", "USUARIO");
+        claims.put("nombreCompleto", name != null ? name : login);
 
         return claims;
 	}

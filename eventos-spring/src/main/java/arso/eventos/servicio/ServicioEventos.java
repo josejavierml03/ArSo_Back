@@ -162,7 +162,7 @@ public class ServicioEventos implements IServicioEventos {
 			EventoResumen eventoR = new EventoResumen();
 			eventoR.setId(e.getId());
 			eventoR.setNombre(e.getNombre());
-			eventoR.setDescipcion(e.getDescripcion());
+			eventoR.setDescripcion(e.getDescripcion());
 			eventoR.setCategoria(e.getCategoria());
 			eventoR.setFechaInicio(ocupacion.getFechaInicio());												
 			eventoR.setDireccionEspacioFisico(espacio.getDireccion());

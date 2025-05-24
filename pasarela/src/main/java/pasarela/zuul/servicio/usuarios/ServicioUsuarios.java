@@ -12,6 +12,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
 		usuarios.put("juan", new Usuario("juan", "Juan Pérez", "1234", "GESTOR_EVENTOS"));
 		usuarios.put("ana", new Usuario("ana", "Ana Gómez", "abcd", "PROPIETARIO_ESPACIOS"));
 		usuarios.put("lucia", new Usuario("lucia", "Lucía Martínez", "pass", "USUARIO"));
+		usuarios.put("admin", new Usuario("admin", "Administrador Total", "admin123", "GESTOR_EVENTOS,PROPIETARIO_ESPACIOS")); 
 	}
 
 	@Override

@@ -13,12 +13,13 @@ public class EventoDto {
     private String categoria;
     private String fechaInicio;
     private String fechaFin;
+    private String espacioFisicoId;
 
     public EventoDto() {
     }
 
     public EventoDto(String id, String nombre, String descripcion, String organizador, int plazas, boolean cancelado,
-                     String categoria, String fechaInicio, String fechaFin) {
+                     String categoria, String fechaInicio, String fechaFin,String espacioFisicoId) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -28,6 +29,7 @@ public class EventoDto {
         this.categoria = categoria;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
+        this.setEspacioFisicoId(espacioFisicoId);
     }
 
     public String getId() {
@@ -112,8 +114,17 @@ public class EventoDto {
             evento.isCancelado(),
             evento.getCategoria().toString(),
             evento.getOcupacion().getFechaInicio().toString(),
-            evento.getOcupacion().getFechaFin().toString()
+            evento.getOcupacion().getFechaFin().toString(),
+            evento.getOcupacion().getEspacioFisico().getId()
         );
     }
+
+	public String getEspacioFisicoId() {
+		return espacioFisicoId;
+	}
+
+	public void setEspacioFisicoId(String espacioFisicoId) {
+		this.espacioFisicoId = espacioFisicoId;
+	}
 
 }

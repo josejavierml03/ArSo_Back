@@ -74,6 +74,10 @@ public class ServicioEventos implements IServicioEventos {
 		if (espacio.getEstado() == Estado.CERRADO_TEMPORALMENTE) {
 			throw new IllegalArgumentException("No se puede crear un evento con un espacio cerrado temporalmente");
 		}
+		
+		if (espacio.getCapacidad()< plazas) {
+			throw new IllegalArgumentException("No se puede crear un evento con mas plazas que la capacidad del evento");
+		}
 
 		Evento evento = new Evento(nombre, descripcion, organizador, plazas, categoria, fechaInicio, fechaFin, espacio);
 		String id = repositorioEvento.save(evento).getId();

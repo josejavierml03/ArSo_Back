@@ -16,5 +16,7 @@ public interface RepositorioReservas extends PagingAndSortingRepository<Reserva,
 	
 	Page<Reserva> findByEvento_Id(String eventoId, Pageable pageable);
 	
+	List<Reserva> findByIdUsuario(String idUsuario);
+	
 
 }

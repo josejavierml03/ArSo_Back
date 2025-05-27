@@ -1,6 +1,8 @@
 package arso.reservas.rest;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -12,6 +14,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,5 +82,32 @@ public class ControladorReservas implements ReservasApi {
 		 return this.pagedResourcesAssembler.toModel(resultado, ReservaAssembler);
 	}
 	
+	@PreAuthorize("hasRole('USUARIO')")
+	@GetMapping("/plazas/{idEvento}")
+	public ResponseEntity<Integer> getPlazasDisponibles(@PathVariable String idEvento) throws Exception {
+	    int plazas = this.servicio.getPlazasDisponibles(idEvento);
+	    return ResponseEntity.ok(plazas);
+	}
+	
+	@PreAuthorize("hasRole('USUARIO')")
+	@GetMapping("/usuario/{idUsuario}")
+	public List<ReservaDto> getReservasDeUsuario(@PathVariable String idUsuario) throws Exception {
+	    List<Reserva> reservas = this.servicio.getReservasUsuario(idUsuario);
+	    List<ReservaDto> resultado = new ArrayList<>();
+
+	    for (Reserva r : reservas) {
+	        resultado.add(ReservaDto.fromEntity(r));
+	    }
+
+	    return resultado;
+	}
+	
+	@PreAuthorize("hasRole('USUARIO')")
+	@PatchMapping("/cancelada/{idReserva}")
+	public ResponseEntity<Void> anularReserva(@PathVariable String idReserva) throws Exception {
+	    this.servicio.anularReserva(idReserva);
+	    return ResponseEntity.noContent().build();
+	}
+
 	
 }

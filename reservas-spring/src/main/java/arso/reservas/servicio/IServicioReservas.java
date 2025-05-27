@@ -18,4 +18,10 @@ public interface IServicioReservas {
 	
 	Page<Reserva> getListadoPaginado(Pageable pageable, String id);
 	
+	int getPlazasDisponibles(String idEvento) throws EntidadNoEncontrada;
+	
+	List<Reserva> getReservasUsuario(String idUsuario) throws EntidadNoEncontrada;
+	
+	void anularReserva(String idReserva) throws EntidadNoEncontrada;
+	
 }

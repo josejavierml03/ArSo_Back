@@ -3,11 +3,12 @@ package arso.reservas.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Evento {
-
+	@Id
 	private String id;
 	private int plazasDisponibles;
 	private boolean cancelado;

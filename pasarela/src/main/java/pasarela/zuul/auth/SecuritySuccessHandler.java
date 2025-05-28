@@ -42,7 +42,7 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
 			respuesta.put("roles", claims.get("roles"));
 
 			String redirectUrl = String.format(
-		            "http://localhost:5173/oauth-success?token=%s&nombre=%s&roles=%s",
+		            "http://localhost:3001/oauth-success?token=%s&nombre=%s&roles=%s",
 		            token,
 		            claims.get("nombreCompleto"),
 		            claims.get("roles")
